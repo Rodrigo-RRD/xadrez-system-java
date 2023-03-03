@@ -37,15 +37,18 @@ public class UI {
         try {
             String s = sc.nextLine();
             char column = s.charAt(0);
-            //vai recortar o string apartir da posição 1 e vai converter o resultado para inteiro
-            int row = Integer.parseInt(s.substring(1));
+            int row = Integer.parseInt(s.substring(1));//vai recortar o string apartir da posição 1 e vai converter o resultado para inteiro
             return new ChessPosition(column, row);
-
         }catch (RuntimeException e){
             throw new InputMismatchException("Error reading ChessPosition. Valid Values are from a1 to h8");
         }
     }
 
+    // https://stackoverflow.com/questions/2979383/java-clear-the-console
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
     public static void printBoard(ChessPiece[][] pieces){
 
     for (int i =0; i< pieces.length; i++){

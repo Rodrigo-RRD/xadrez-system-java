@@ -21,6 +21,7 @@ public class Board {
     public int getColumns() {
         return columns;
     }
+
     public Piece piece(int row, int column){
         if (!positionExists(row,column)){
             throw new BoardException("Position not on the board");
