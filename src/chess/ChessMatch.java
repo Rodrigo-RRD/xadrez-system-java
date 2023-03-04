@@ -7,12 +7,18 @@ import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ChessMatch {
+
     //Coração do sistema
-private int turn;
-private Color currentPlayer;
-private Board board;
+    private List<Piece> piecesOnTheBoard = new ArrayList<>();
+    private List<Piece> capturedPieces = new ArrayList<>();
+    private int turn;
+    private Color currentPlayer;
+    private Board board;
 
 
     public ChessMatch(){
@@ -54,10 +60,15 @@ public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition t
     return (ChessPiece)capturedPiece;
 }
 
+//tira da origem e coloca no destino
 private Piece makeMove(Position source, Position target){
         Piece p = board.removePiece(source);
         Piece capturedPiece = board.removePiece(target);
         board.placePiece(p,target);
+        if (capturedPiece != null){
+            piecesOnTheBoard.remove(capturedPiece);
+            capturedPieces.add(capturedPiece);
+        }
         return capturedPiece;
 }
     private void validateSourcePosition(Position position){
@@ -87,6 +98,7 @@ private Piece makeMove(Position source, Position target){
     private void placeNewPiece(char column, int row, ChessPiece piece){
         //operação de colocar peça passando a posição nas cordanadas do xadrez
         board.placePiece(piece,new ChessPosition(column, row).toPosition());
+        piecesOnTheBoard.add(piece);
 }
 
 private void initialSetup(){
