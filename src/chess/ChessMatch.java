@@ -9,6 +9,7 @@ import chess.pieces.Rook;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ChessMatch {
@@ -19,7 +20,7 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private Board board;
-
+    private boolean check;
 
     public ChessMatch(){
         //é nessa classe que vai informar que vai ser 8 x 8 o tabuleiro
@@ -34,6 +35,9 @@ public class ChessMatch {
     }
     public Color getCurrentPlayer(){
         return currentPlayer;
+    }
+    public boolean getCheck(){
+        return check;
     }
     public ChessPiece[][] getPieces(){
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
@@ -50,18 +54,25 @@ public class ChessMatch {
         return board.piece(position).possibleMoves();
 }
 
-public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
+    public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
     Position source = sourcePosition.toPosition();
     Position target = targetPosition.toPosition();
     validateSourcePosition(source); //validar a posição de origem
     validateTargetPosition(source,target);  //validar a posição de destino
     Piece capturedPiece = makeMove(source, target);
+    if (testCheck(currentPlayer)){
+        undoMove(source,target,capturedPiece);
+        throw new ChessException("You can´t put yourself in check");
+    }
+check = (testCheck(opponent(currentPlayer))) ? true : false;
+
     nextTurn();
+
     return (ChessPiece)capturedPiece;
 }
 
 //tira da origem e coloca no destino
-private Piece makeMove(Position source, Position target){
+    private Piece makeMove(Position source, Position target){
         Piece p = board.removePiece(source);
         Piece capturedPiece = board.removePiece(target);
         board.placePiece(p,target);
@@ -70,6 +81,16 @@ private Piece makeMove(Position source, Position target){
             capturedPieces.add(capturedPiece);
         }
         return capturedPiece;
+}
+    private void undoMove(Position source, Position target,Piece capturedPiece){
+        Piece p = board.removePiece(target);
+        board.placePiece(p, source);
+
+        if (capturedPiece != null){
+            board.placePiece(capturedPiece,target);
+            capturedPieces.remove(capturedPiece);
+            piecesOnTheBoard.add(capturedPiece);
+        }
 }
     private void validateSourcePosition(Position position){
         if (!board.thereIsAPiece(position)){
@@ -95,6 +116,32 @@ private Piece makeMove(Position source, Position target){
 //se o jogador atual for igual a color.white entao ele vai ser o color.black, caso contrario ele vai ser o colo.white
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
+    private Color opponent(Color color){
+//se essa cor q passei ela for igual a color.white então vai retornar o color.black caso contrario vai retornar o color.white
+        return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+    private ChessPiece king(Color color){
+//Filtrar a lista
+        List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor()==color).collect(Collectors.toList());
+        for (Piece p : list){
+            if (p instanceof King){
+                return (ChessPiece)p;
+            }
+        }
+        throw new IllegalStateException("There is no " + color + "king on the board");
+    }
+    private boolean testCheck(Color color){
+        Position kingPosition = king(color).getChessPosition().toPosition();
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor()==opponent(color)).collect(Collectors.toList());
+        for (Piece p : opponentPieces){
+            boolean[][] mat = p.possibleMoves();
+            if (mat[kingPosition.getRow()][kingPosition.getColumn()]){
+                return true;
+            }
+        }
+    return false;
+}
+
     private void placeNewPiece(char column, int row, ChessPiece piece){
         //operação de colocar peça passando a posição nas cordanadas do xadrez
         board.placePiece(piece,new ChessPosition(column, row).toPosition());
