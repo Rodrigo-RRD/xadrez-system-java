@@ -18,7 +18,6 @@ public class Program {
         ChessMatch chessMatch = new ChessMatch();
         List<ChessPiece> captured = new ArrayList<>();
 
-
         while (!chessMatch.getCheckMate()){
             try {
                 UI.clearScreen();
@@ -63,5 +62,5 @@ public class Program {
         UI.printMatch(chessMatch, captured);
 
     }
-
+/*By Rodrigo Rodrigues Ribeiro Dutra - copyright*/
 }

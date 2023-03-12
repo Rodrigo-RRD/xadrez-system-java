@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="xadrez-system:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/xadrez_system_jar</output-path>
+    <root id="archive" name="xadrez-system.jar">
+      <element id="module-output" name="xadrez-system" />
+    </root>
+  </artifact>
+</component>
