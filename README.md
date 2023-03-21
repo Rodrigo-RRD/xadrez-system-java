@@ -25,7 +25,7 @@ Utilizar IDE que preferir.
 
 * Coloca a letra da coluna e o numero da linha para selecionar a peça
 
-* depois de selecionada vai colocar o destino seguindo a mesma logia de seleção.
+* depois de selecionada vai colocar o destino seguindo a mesma logica de seleção.
 
 * O branco por cima da barra é onde está disponivel para mover</h4>
 
